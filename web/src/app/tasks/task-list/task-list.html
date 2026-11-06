@@ -1,0 +1,29 @@
+<nav class="filters">
+  @for (filter of filters; track filter.value) {
+    <button
+      type="button"
+      [class.active]="taskService.filter() === filter.value"
+      [attr.aria-pressed]="taskService.filter() === filter.value"
+      (click)="taskService.setFilter(filter.value)"
+    >
+      {{ filter.label }}
+    </button>
+  }
+</nav>
+
+<ul class="tasks">
+  @for (task of taskService.tasks(); track task.id) {
+    <li [class.done]="task.done">
+      <label>
+        <input type="checkbox" [checked]="task.done" (change)="taskService.toggleDone(task)" />
+        <span class="title">{{ task.title }}</span>
+      </label>
+      @if (task.description) {
+        <p class="description">{{ task.description }}</p>
+      }
+      <button type="button" class="delete" (click)="taskService.remove(task)">Eliminar</button>
+    </li>
+  } @empty {
+    <li class="empty">No hay tareas</li>
+  }
+</ul>

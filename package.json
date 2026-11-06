@@ -1,0 +1,11 @@
+{
+  "name": "todo-app",
+  "private": true,
+  "packageManager": "pnpm@10.33.0",
+  "engines": {
+    "node": ">=24.15.0"
+  },
+  "scripts": {
+    "lint": "pnpm --filter api lint && pnpm --filter web lint"
+  }
+}

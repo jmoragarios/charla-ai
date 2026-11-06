@@ -1,0 +1,21 @@
+<form class="task-form" (submit)="submit($event)">
+  <label for="title">Título</label>
+  <input
+    #titleInput
+    id="title"
+    maxlength="120"
+    required
+    [value]="title()"
+    (input)="title.set(titleInput.value)"
+  />
+
+  <label for="description">Descripción</label>
+  <input
+    #descriptionInput
+    id="description"
+    [value]="description()"
+    (input)="description.set(descriptionInput.value)"
+  />
+
+  <button type="submit" [disabled]="!canSubmit()">Agregar</button>
+</form>

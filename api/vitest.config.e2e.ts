@@ -7,5 +7,7 @@ export default defineConfig({
     root: './',
     include: ['**/*.e2e-spec.ts'],
     env: { DB_NAME: 'todo_test' },
+    // E2E files share the todo_test database, so they must not run in parallel.
+    fileParallelism: false,
   },
 });

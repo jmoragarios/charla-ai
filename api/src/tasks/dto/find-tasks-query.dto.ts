@@ -1,5 +1,5 @@
-import { Transform } from 'class-transformer';
-import { IsBoolean, IsOptional } from 'class-validator';
+import { Transform, Type } from 'class-transformer';
+import { IsBoolean, IsInt, IsOptional } from 'class-validator';
 
 export class FindTasksQueryDto {
   @IsOptional()
@@ -8,4 +8,9 @@ export class FindTasksQueryDto {
   )
   @IsBoolean()
   done?: boolean;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  categoryId?: number;
 }

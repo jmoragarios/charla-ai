@@ -17,5 +17,19 @@
     (input)="description.set(descriptionInput.value)"
   />
 
+  <label for="category">Categoría</label>
+  <select
+    #categorySelect
+    id="category"
+    (change)="categoryId.set(categorySelect.value)"
+  >
+    <option value="" [selected]="categoryId() === ''">Sin categoría</option>
+    @for (category of categoryService.categories(); track category.id) {
+      <option [value]="category.id" [selected]="categoryId() === '' + category.id">
+        {{ category.name }}
+      </option>
+    }
+  </select>
+
   <button type="submit" [disabled]="!canSubmit()">Agregar</button>
 </form>

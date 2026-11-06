@@ -9,6 +9,8 @@ export class TaskService {
 
   readonly tasks = signal<Task[]>([]);
   readonly filter = signal<TaskFilter>('all');
+  /** `null` means every category, including tasks without one. */
+  readonly categoryFilter = signal<number | null>(null);
 
   load(): void {
     let params = new HttpParams();
@@ -16,11 +18,20 @@ export class TaskService {
     if (filter !== 'all') {
       params = params.set('done', filter === 'done');
     }
+    const categoryId = this.categoryFilter();
+    if (categoryId !== null) {
+      params = params.set('categoryId', categoryId);
+    }
     this.http.get<Task[]>(this.apiUrl, { params }).subscribe((tasks) => this.tasks.set(tasks));
   }
 
   setFilter(filter: TaskFilter): void {
     this.filter.set(filter);
+    this.load();
+  }
+
+  setCategoryFilter(categoryId: number | null): void {
+    this.categoryFilter.set(categoryId);
     this.load();
   }
 
@@ -31,6 +42,12 @@ export class TaskService {
   toggleDone(task: Task): void {
     this.http
       .patch<Task>(`${this.apiUrl}/${task.id}`, { done: !task.done })
+      .subscribe(() => this.load());
+  }
+
+  setCategory(task: Task, categoryId: number | null): void {
+    this.http
+      .patch<Task>(`${this.apiUrl}/${task.id}`, { categoryId })
       .subscribe(() => this.load());
   }
 

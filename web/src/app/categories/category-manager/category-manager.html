@@ -1,0 +1,48 @@
+<section class="category-manager">
+  <h2>Categorías</h2>
+
+  <ul class="categories">
+    @for (category of categoryService.categories(); track category.id) {
+      <li>
+        <span class="category-chip" [style.--chip-color]="category.color">{{ category.name }}</span>
+        <button
+          type="button"
+          class="delete-category"
+          [attr.aria-label]="'Eliminar categoría ' + category.name"
+          (click)="categoryService.remove(category)"
+        >
+          ×
+        </button>
+      </li>
+    } @empty {
+      <li class="empty">No hay categorías</li>
+    }
+  </ul>
+
+  <form class="category-form" (submit)="submit($event)">
+    <label for="category-name">Nueva categoría</label>
+    <input
+      #nameInput
+      id="category-name"
+      maxlength="50"
+      required
+      [value]="name()"
+      (input)="name.set(nameInput.value)"
+    />
+    <div class="color-picker" role="group" aria-label="Color">
+      @for (option of colors; track option.value) {
+        <button
+          type="button"
+          class="color-swatch"
+          [style.background]="option.value"
+          [class.active]="color() === option.value"
+          [attr.aria-pressed]="color() === option.value"
+          [attr.aria-label]="option.label"
+          [title]="option.label"
+          (click)="color.set(option.value)"
+        ></button>
+      }
+    </div>
+    <button type="submit" [disabled]="!canSubmit()">Crear categoría</button>
+  </form>
+</section>

@@ -11,6 +11,31 @@
   }
 </nav>
 
+@if (categoryService.categories().length > 0) {
+  <nav class="filters category-filters" aria-label="Filtrar por categoría">
+    <button
+      type="button"
+      [class.active]="taskService.categoryFilter() === null"
+      [attr.aria-pressed]="taskService.categoryFilter() === null"
+      (click)="taskService.setCategoryFilter(null)"
+    >
+      Todas las categorías
+    </button>
+    @for (category of categoryService.categories(); track category.id) {
+      <button
+        type="button"
+        class="category-filter"
+        [style.--chip-color]="category.color"
+        [class.active]="taskService.categoryFilter() === category.id"
+        [attr.aria-pressed]="taskService.categoryFilter() === category.id"
+        (click)="taskService.setCategoryFilter(category.id)"
+      >
+        {{ category.name }}
+      </button>
+    }
+  </nav>
+}
+
 <ul class="tasks">
   @for (task of taskService.tasks(); track task.id) {
     <li [class.done]="task.done">
@@ -18,10 +43,28 @@
         <input type="checkbox" [checked]="task.done" (change)="taskService.toggleDone(task)" />
         <span class="title">{{ task.title }}</span>
       </label>
+      @if (task.category) {
+        <span class="category-chip" [style.--chip-color]="task.category.color">
+          {{ task.category.name }}
+        </span>
+      }
+      <select
+        #categorySelect
+        class="task-category"
+        [attr.aria-label]="'Categoría de ' + task.title"
+        (change)="changeCategory(task, categorySelect.value)"
+      >
+        <option value="" [selected]="task.categoryId === null">Sin categoría</option>
+        @for (category of categoryService.categories(); track category.id) {
+          <option [value]="category.id" [selected]="task.categoryId === category.id">
+            {{ category.name }}
+          </option>
+        }
+      </select>
+      <button type="button" class="delete" (click)="taskService.remove(task)">Eliminar</button>
       @if (task.description) {
         <p class="description">{{ task.description }}</p>
       }
-      <button type="button" class="delete" (click)="taskService.remove(task)">Eliminar</button>
     </li>
   } @empty {
     <li class="empty">No hay tareas</li>

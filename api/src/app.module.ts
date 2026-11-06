@@ -1,11 +1,16 @@
 import { Module, ValidationPipe } from '@nestjs/common';
 import { APP_PIPE } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { CategoriesModule } from './categories/categories.module.js';
 import { dataSourceOptions } from './data-source.js';
 import { TasksModule } from './tasks/tasks.module.js';
 
 @Module({
-  imports: [TypeOrmModule.forRoot(dataSourceOptions), TasksModule],
+  imports: [
+    TypeOrmModule.forRoot(dataSourceOptions),
+    TasksModule,
+    CategoriesModule,
+  ],
   providers: [
     {
       provide: APP_PIPE,

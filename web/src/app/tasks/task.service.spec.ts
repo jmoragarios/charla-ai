@@ -13,6 +13,8 @@ describe('TaskService', () => {
     title: 'Write tests',
     description: null,
     done: false,
+    categoryId: null,
+    category: null,
     createdAt: '2026-01-01T00:00:00.000Z',
     updatedAt: '2026-01-01T00:00:00.000Z',
   };
@@ -77,6 +79,40 @@ describe('TaskService', () => {
     const req = http.expectOne('/tasks/1');
     expect(req.request.method).toBe('DELETE');
     req.flush(null);
+    http.expectOne('/tasks').flush([]);
+  });
+
+  it('sends categoryId when filtering by category, combined with done', () => {
+    service.filter.set('pending');
+    service.setCategoryFilter(3);
+
+    http.expectOne('/tasks?done=false&categoryId=3').flush([]);
+
+    expect(service.categoryFilter()).toBe(3);
+  });
+
+  it('clears the category filter with null', () => {
+    service.setCategoryFilter(null);
+
+    http.expectOne('/tasks').flush([]);
+  });
+
+  it('sets the category of a task and reloads', () => {
+    service.setCategory(task, 3);
+
+    const req = http.expectOne('/tasks/1');
+    expect(req.request.method).toBe('PATCH');
+    expect(req.request.body).toEqual({ categoryId: 3 });
+    req.flush({ ...task, categoryId: 3 });
+    http.expectOne('/tasks').flush([]);
+  });
+
+  it('removes the category of a task with null', () => {
+    service.setCategory(task, null);
+
+    const req = http.expectOne('/tasks/1');
+    expect(req.request.body).toEqual({ categoryId: null });
+    req.flush(task);
     http.expectOne('/tasks').flush([]);
   });
 });
